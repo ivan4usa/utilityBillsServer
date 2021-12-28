@@ -1,8 +1,11 @@
 package com.ivan4usa.utilityBills.entities;
 
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Table(name = "user", schema = "utility_db")
@@ -28,4 +31,7 @@ public class User {
 
     @Column(name = "last_name", length = 40)
     private String lastName;
+
+    @Transient
+    private Collection<? extends GrantedAuthority> authorities;
 }
