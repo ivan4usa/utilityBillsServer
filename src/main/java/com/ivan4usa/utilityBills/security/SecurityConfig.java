@@ -21,8 +21,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value("${client.url}") private String CLIENT_URL;
-
     private CustomUserDetailsService customUserDetailsService;
     private JWTAuthenticationFilter authenticationFilter;
 
