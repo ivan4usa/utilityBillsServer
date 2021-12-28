@@ -66,6 +66,8 @@ public class JWTTokenProvider {
             logger.error("JWT token is unsupported: " + token);
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims string is empty: " + token);
+        } catch (NullPointerException e) {
+            logger.error("Null Pointer: " + token);
         }
         return false;
     }

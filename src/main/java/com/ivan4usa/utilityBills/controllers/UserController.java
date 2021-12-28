@@ -23,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.validation.Valid;
@@ -143,9 +144,8 @@ public class UserController {
         return new ResponseEntity<>(errorMsg, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleExceptions(Exception e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(MethodNotAllowedException.class)
+    public ResponseEntity<String> handleMethodNotAllowedExceptions(MethodNotAllowedException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
     }
-
 }

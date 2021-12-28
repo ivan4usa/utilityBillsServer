@@ -8,22 +8,46 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private CustomUserDetailsService customUserDetailsService;
+    private JWTAuthenticationFilter authenticationFilter;
 
     @Autowired
     public void setCustomUserDetailsService(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
     }
 
+    @Autowired
+    public void setAuthenticationFilter(JWTAuthenticationFilter authenticationFilter) {
+        this.authenticationFilter = authenticationFilter;
+    }
+
     @Bean
     BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     @Override
@@ -43,5 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin().disable();
         http.httpBasic().disable();
         http.requiresChannel().anyRequest().requiresSecure();
+        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }
