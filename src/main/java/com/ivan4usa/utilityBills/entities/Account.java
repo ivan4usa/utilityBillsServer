@@ -1,8 +1,12 @@
 package com.ivan4usa.utilityBills.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "account", schema = "utility_db")
@@ -32,7 +36,13 @@ public class Account {
     @Column(name = "account_number", length = 30)
     private String accountNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "house_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(optional = false)
+    @JsonBackReference
+    @JoinColumn(name = "house_id", referencedColumnName = "id", insertable=false, updatable=false)
     private House house;
+
+    @Column(name = "house_id", nullable = false)
+    private Long houseId;
+
+
 }

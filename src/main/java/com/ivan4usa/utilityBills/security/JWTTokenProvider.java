@@ -2,6 +2,7 @@ package com.ivan4usa.utilityBills.security;
 
 import com.google.gson.Gson;
 import com.ivan4usa.utilityBills.entities.User;
+import com.ivan4usa.utilityBills.payloads.LoginResponse;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,7 @@ public class JWTTokenProvider {
     @Value("${jwt.secret_key}") private String SECRET_KEY;
     @Value("${jwt.token_prefix}") private String TOKEN_PREFIX;
 
-    public String generateToken(User user, boolean longExpirationMode) {
+    public LoginResponse generateToken(User user, boolean longExpirationMode) {
         Date now = new Date();
         int exp;
         if (longExpirationMode) {
@@ -42,15 +43,16 @@ public class JWTTokenProvider {
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS512.getJcaName());
 
-        return TOKEN_PREFIX + Jwts.builder()
+        return new LoginResponse(TOKEN_PREFIX + Jwts.builder()
                 .setClaims(claimMap)
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS512, signingKey)
-                .compact();
+                .compact(), null, System.currentTimeMillis() + exp);
     }
 
     public boolean validateToken(String token) {
+        System.out.println(token);
         try {
             Jwts.parser()
                     .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))

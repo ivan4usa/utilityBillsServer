@@ -72,9 +72,11 @@ public class UserController {
 
         try {
             userDetails.getUser().setPassword(null);
-            String jwt = jwtTokenProvider.generateToken(userDetails.getUser(), longExpirationMode);
+            LoginResponse response = jwtTokenProvider.generateToken(userDetails.getUser(), longExpirationMode);
             Long id = userDetails.getUser().getId();
-            return ResponseEntity.ok(new LoginResponse(jwt, id));
+            response.setId(id);
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
@@ -89,12 +91,8 @@ public class UserController {
         user.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
-        try {
-            return ResponseEntity.ok(service.add(user));
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        service.add(user);
+        return ResponseEntity.ok("success");
     }
 
     @PutMapping("/update-password")
@@ -141,11 +139,16 @@ public class UserController {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .findFirst()
                 .orElse(e.getMessage());
-        return new ResponseEntity<>(errorMsg, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorMsg, HttpStatus.OK);
     }
 
     @ExceptionHandler(MethodNotAllowedException.class)
     public ResponseEntity<String> handleMethodNotAllowedExceptions(MethodNotAllowedException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleExceptions(Exception e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
     }
 }

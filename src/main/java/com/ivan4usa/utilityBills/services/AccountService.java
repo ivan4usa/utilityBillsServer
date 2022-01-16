@@ -19,7 +19,11 @@ public class AccountService {
         this.repository = repository;
     }
 
-    public List<Account> findAll(House house) {
+    public List<Account> findAll(Long userId) {
+        return repository.findAllByUserId(userId);
+    }
+
+    public List<Account> findAllByHouse(House house) {
         return repository.findAllByHouse(house);
     }
 

@@ -48,38 +48,42 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         boolean isRequestToPublicApi = PUBLIC_URLS.stream().anyMatch(s-> httpServletRequest.getRequestURI().toLowerCase().equals(s));
 
-        if (!isRequestToPublicApi && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String jwt = this.getJWTFromRequest(httpServletRequest);
-            if (jwt != null) {
-                if (jwtTokenProvider.validateToken(jwt)) {
-                    User user = jwtTokenProvider.getUserFromToken(jwt);
-                    CustomUserDetails userDetails = new CustomUserDetails(user);
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities()
-                    );
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    logger.error("Token not found");
-                    httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    httpServletResponse.getWriter().write("Unauthorized: The token is not Valid");
-                    httpServletResponse.getWriter().flush();
-                    return;
-                }
-
-            } else {
-                logger.error("Token not found");
-                httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                httpServletResponse.getWriter().write("Unauthorized: The token is not found");
-                httpServletResponse.getWriter().flush();
-                return;
-            }
-        }
+//        if (!isRequestToPublicApi && SecurityContextHolder.getContext().getAuthentication() == null) {
+//            String jwt = this.getJWTFromRequest(httpServletRequest);
+//            if (jwt != null) {
+//                if (jwtTokenProvider.validateToken(jwt)) {
+//                    System.out.println("valid");
+//                    User user = jwtTokenProvider.getUserFromToken(jwt);
+//                    CustomUserDetails userDetails = new CustomUserDetails(user);
+//                    System.out.println(userDetails.getId());
+//                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+//                            userDetails, null, userDetails.getAuthorities()
+//                    );
+//                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+//                    SecurityContextHolder.getContext().setAuthentication(authentication);
+//                    System.out.println("good");
+//                } else {
+//                    logger.error("Token not valid");
+//                    httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                    httpServletResponse.getWriter().write("Unauthorized: The token is not Valid");
+//                    httpServletResponse.getWriter().flush();
+//                    return;
+//                }
+//
+//            } else {
+//                logger.error("Token not found");
+//                httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                httpServletResponse.getWriter().write("Unauthorized: The token is not found");
+//                httpServletResponse.getWriter().flush();
+//                return;
+//            }
+//        }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
     private String getJWTFromRequest(HttpServletRequest request) {
         String bearToken = request.getHeader(HEADER_STRING);
+        System.out.println(request.getHeader("Authorization"));
         if (StringUtils.hasText(bearToken) && bearToken.startsWith(TOKEN_PREFIX)) {
             return bearToken.split(" ")[1];
         }

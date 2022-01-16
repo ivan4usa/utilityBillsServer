@@ -5,12 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
+
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponse {
-    private String jwt;
+@AllArgsConstructor
+public class SearchValues {
     private Long id;
-    private Long expirationDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

@@ -7,10 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponse {
-    private String jwt;
-    private Long id;
-    private Long expirationDate;
+@AllArgsConstructor
+public class StatisticsRequest {
+    private Long userId;
+    private String year;
 }

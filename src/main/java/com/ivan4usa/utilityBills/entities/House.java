@@ -1,8 +1,14 @@
 package com.ivan4usa.utilityBills.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "house", schema = "utility_db")
@@ -34,4 +40,8 @@ public class House {
 
     @Column(name = "user_id", nullable = false )
     private Long userId;
+
+    @OneToMany(mappedBy="house", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Account> accounts = new ArrayList<>();
 }

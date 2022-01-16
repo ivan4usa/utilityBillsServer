@@ -1,7 +1,7 @@
 package com.ivan4usa.utilityBills.controllers;
 
-import com.ivan4usa.utilityBills.entities.Account;
 import com.ivan4usa.utilityBills.entities.Bill;
+import com.ivan4usa.utilityBills.payloads.SearchValues;
 import com.ivan4usa.utilityBills.services.BillService;
 import com.ivan4usa.utilityBills.services.UserService;
 import org.apache.logging.log4j.LogManager;
@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import java.util.List;
 
 @Controller
 @CrossOrigin
@@ -31,8 +33,39 @@ public class BillController {
         this.userService = userService;
     }
 
+    @PostMapping("/search-by-account")
+    public ResponseEntity<?> searchByAccount(@RequestBody SearchValues billValues) {
+        try {
+            return ResponseEntity.ok(service.searchByAccount(billValues));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.ok(e.getMessage());
+        }
+    }
+
+    @PostMapping("/search-by-house")
+    public ResponseEntity<?> searchByUser(@RequestBody SearchValues billValues) {
+        try {
+            return ResponseEntity.ok(service.searchByHouse(billValues));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.ok(e.getMessage());
+        }
+    }
+
+
+    @PostMapping("/all")
+    public ResponseEntity<?> findAll(@RequestBody Long accountId) {
+        try {
+            return ResponseEntity.ok(service.findAll(accountId));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.ok(e.getMessage());
+        }
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<?> findAll(@PathVariable("id") Long id) {
+    public ResponseEntity<?> findById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
@@ -41,6 +74,19 @@ public class BillController {
         try {
             if (bill.getId() != null) {bill.setId(null);}
             return ResponseEntity.ok(service.add(bill));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @PostMapping("/add-many")
+    public ResponseEntity<?> add(@RequestBody List<Bill> bills) {
+        try {
+            for (Bill bill: bills) {
+                if (bill.getId() != null) {bill.setId(null);}
+            }
+            return ResponseEntity.ok(service.addMany(bills));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);

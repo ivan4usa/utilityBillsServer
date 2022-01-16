@@ -32,12 +32,17 @@ public class AccountController {
     }
 
     @PostMapping("/all")
-    public ResponseEntity<?> findAll(@RequestBody House house) {
-        return ResponseEntity.ok(service.findAll(house));
+    public ResponseEntity<?> findAll(@RequestBody Long userId) {
+        return ResponseEntity.ok(service.findAll(userId));
+    }
+
+    @PostMapping("/all-by-house")
+    public ResponseEntity<?> findAllByHouse(@RequestBody House house) {
+        return ResponseEntity.ok(service.findAllByHouse(house));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findAll(@PathVariable("id") Long id) {
+    public ResponseEntity<?> findAllById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
