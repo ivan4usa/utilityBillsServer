@@ -52,7 +52,6 @@ public class JWTTokenProvider {
     }
 
     public boolean validateToken(String token) {
-        System.out.println(token);
         try {
             Jwts.parser()
                     .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))

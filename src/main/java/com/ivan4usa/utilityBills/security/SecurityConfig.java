@@ -1,5 +1,6 @@
 package com.ivan4usa.utilityBills.security;
 
+import com.google.common.collect.ImmutableList;
 import com.ivan4usa.utilityBills.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Value("${client.url}") private String CLIENT_URL;
 
     private CustomUserDetailsService customUserDetailsService;
     private JWTAuthenticationFilter authenticationFilter;
@@ -44,9 +47,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        config.setAllowedOrigins(ImmutableList.of(CLIENT_URL));
+        config.setAllowedHeaders(ImmutableList.of("Authorization", "Cache-Control", "Content-Type"));
+        config.setAllowedMethods(ImmutableList.of("GET", "POST", "PUT", "DELETE"));
         source.registerCorsConfiguration("/**", config);
         return source;
     }
@@ -65,6 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
+        http.cors();
         http.formLogin().disable();
         http.httpBasic().disable();
         http.requiresChannel().anyRequest().requiresSecure();
