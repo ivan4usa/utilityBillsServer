@@ -32,3 +32,11 @@ build/
 ### VS Code ###
 .vscode/
 
+### JetBeans
+.idea
+
+### Docker
+Dockerfile
+docker-compose.yml
+
+
